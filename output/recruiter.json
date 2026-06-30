@@ -1,0 +1,231 @@
+{
+    "candidate_name": {
+        "value": "Harikaran C",
+        "confidence": 1.0
+    },
+    "emails": [
+        {
+            "value": "hari@gmail.com",
+            "confidence": 0.95
+        },
+        {
+            "value": "harikaran2310104@ssn.edu.in",
+            "confidence": 0.85
+        }
+    ],
+    "phones": [
+        {
+            "value": "+919876543210",
+            "confidence": 0.95
+        },
+        {
+            "value": "+919444008385",
+            "confidence": 0.85
+        }
+    ],
+    "location": {
+        "value": {
+            "city": "Chennai"
+        },
+        "confidence": 1.0
+    },
+    "headline": null,
+    "summary": null,
+    "skills": [
+        {
+            "name": {
+                "value": "Python",
+                "confidence": 0.85
+            },
+            "category": "programming_language"
+        },
+        {
+            "name": {
+                "value": "Java",
+                "confidence": 0.85
+            },
+            "category": "programming_language"
+        },
+        {
+            "name": {
+                "value": "C",
+                "confidence": 0.85
+            },
+            "category": "programming_language"
+        },
+        {
+            "name": {
+                "value": "JavaScript",
+                "confidence": 0.85
+            },
+            "category": "programming_language"
+        },
+        {
+            "name": {
+                "value": "React",
+                "confidence": 0.85
+            },
+            "category": "framework"
+        },
+        {
+            "name": {
+                "value": "Node.js",
+                "confidence": 0.85
+            },
+            "category": "framework"
+        },
+        {
+            "name": {
+                "value": "Express.js",
+                "confidence": 0.85
+            },
+            "category": "framework"
+        },
+        {
+            "name": {
+                "value": "Flask",
+                "confidence": 0.85
+            },
+            "category": "framework"
+        },
+        {
+            "name": {
+                "value": "MySQL",
+                "confidence": 0.85
+            },
+            "category": "database"
+        },
+        {
+            "name": {
+                "value": "MongoDB",
+                "confidence": 0.85
+            },
+            "category": "database"
+        },
+        {
+            "name": {
+                "value": "Redis",
+                "confidence": 0.85
+            },
+            "category": "database"
+        },
+        {
+            "name": {
+                "value": "Git",
+                "confidence": 0.85
+            },
+            "category": "devops"
+        },
+        {
+            "name": {
+                "value": "GitHub",
+                "confidence": 0.85
+            },
+            "category": "devops"
+        },
+        {
+            "name": {
+                "value": "TensorFlow",
+                "confidence": 0.85
+            },
+            "category": "tool"
+        },
+        {
+            "name": {
+                "value": "Keras",
+                "confidence": 0.85
+            },
+            "category": "tool"
+        },
+        {
+            "name": {
+                "value": "Scikit-learn",
+                "confidence": 0.85
+            },
+            "category": "tool"
+        },
+        {
+            "name": {
+                "value": "Machine Learning",
+                "confidence": 0.85
+            },
+            "category": "tool"
+        },
+        {
+            "name": {
+                "value": "LLM",
+                "confidence": 0.85
+            },
+            "category": "tool"
+        },
+        {
+            "name": {
+                "value": "RAG",
+                "confidence": 0.85
+            },
+            "category": "tool"
+        },
+        {
+            "name": {
+                "value": "REST API",
+                "confidence": 0.85
+            },
+            "category": "tool"
+        },
+        {
+            "name": {
+                "value": "OAuth",
+                "confidence": 0.85
+            },
+            "category": "other"
+        },
+        {
+            "name": {
+                "value": "JWT",
+                "confidence": 0.85
+            },
+            "category": "other"
+        },
+        {
+            "name": {
+                "value": "Postman",
+                "confidence": 0.85
+            },
+            "category": "tool"
+        },
+        {
+            "name": {
+                "value": "Flutter",
+                "confidence": 0.85
+            },
+            "category": "other"
+        }
+    ],
+    "experience": [
+        {
+            "company": {
+                "value": "Adamsbridge Services Private Limited Chennai, Tamil Nadu",
+                "confidence": 0.85
+            },
+            "title": {
+                "value": "Software Developer Intern May 2026 – June 2026",
+                "confidence": 0.85
+            }
+        }
+    ],
+    "education": [
+        {
+            "institution": {
+                "value": "SSN College of Engineering Chennai, India",
+                "confidence": 0.85
+            },
+            "degree": {
+                "value": "B.Tech. Information Technology, CGPA: 8.50 / 10 Aug. 2023 – May 2027",
+                "confidence": 0.85
+            }
+        }
+    ],
+    "links": [],
+    "years_experience": null,
+    "overall_confidence": 0.867
+}

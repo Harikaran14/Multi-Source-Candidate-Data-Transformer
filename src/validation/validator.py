@@ -3,11 +3,22 @@ from __future__ import annotations
 import re
 
 from core.models import Candidate
+from utils.normalizer import Normalizer
 
 
 class CandidateValidator:
     """
-    Validates the canonical Candidate object before projection.
+    Validates the canonical Candidate object.
+
+    Validation includes:
+    - Required fields
+    - Email format
+    - Phone format
+    - Confidence score range
+
+    Email addresses and phone numbers are normalized before
+    validation so that the canonical Candidate object always
+    contains standardized values.
     """
 
     EMAIL_REGEX = re.compile(
@@ -20,10 +31,9 @@ class CandidateValidator:
 
     @classmethod
     def validate(cls, candidate: Candidate) -> list[str]:
-
         errors = []
 
-        # ---------- Name ----------
+        # ---------- Full Name ----------
 
         if (
             candidate.full_name is None
@@ -35,26 +45,38 @@ class CandidateValidator:
 
         for email in candidate.emails:
 
-            if not cls.EMAIL_REGEX.match(email.value):
+            normalized_email = Normalizer.normalize_email(
+                str(email.value)
+            )
+
+            # Keep canonical model normalized
+            email.value = normalized_email
+
+            if not cls.EMAIL_REGEX.fullmatch(normalized_email):
                 errors.append(
-                    f"Invalid email: {email.value}"
+                    f"Invalid email: {normalized_email}"
                 )
 
         # ---------- Phones ----------
 
         for phone in candidate.phones:
 
-            if not cls.PHONE_REGEX.match(phone.value):
+            normalized_phone = Normalizer.normalize_phone(
+                str(phone.value)
+            )
+
+            # Keep canonical model normalized
+            phone.value = normalized_phone
+
+            if not cls.PHONE_REGEX.fullmatch(normalized_phone):
                 errors.append(
-                    f"Invalid phone: {phone.value}"
+                    f"Invalid phone: {normalized_phone}"
                 )
 
         # ---------- Confidence ----------
 
         if not (
-            0.0
-            <= candidate.overall_confidence
-            <= 1.0
+            0.0 <= candidate.overall_confidence <= 1.0
         ):
             errors.append(
                 "Overall confidence must lie between 0 and 1."
