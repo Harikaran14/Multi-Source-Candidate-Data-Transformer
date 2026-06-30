@@ -73,38 +73,7 @@ This allows the system to preserve both the extracted value and its origin.
 ---
 
 ## Architecture
-
-```text
-CSV --------\
-              \
-               Readers
-              /
-Resume ------/
-
-        │
-
-Extraction
-
-        │
-
-Canonical Candidate Model
-
-        │
-
-Merge Engine
-
-        │
-
-Validation & Normalization
-
-        │
-
-Projection Engine
-
-        │
-
-JSON Output
-```
+<img width="628" height="932" alt="image" src="https://github.com/user-attachments/assets/896b6ee0-e45b-434a-8cc4-59617b326e0f" />
 
 ---
 
@@ -329,6 +298,7 @@ python3 main.py \
     --projection config/recruiter_projection.json \
     --output output/recruiter.json
 ```
+<img width="718" height="121" alt="image" src="https://github.com/user-attachments/assets/47a22fa8-dd5d-4c65-86e4-aaea5f24ad98" />
 
 ---
 
@@ -357,6 +327,8 @@ output/
   "overall_confidence": 0.867
 }
 ```
+<img width="912" height="511" alt="image" src="https://github.com/user-attachments/assets/499e8fba-0700-448a-8ab3-607be743e148" />
+
 
 ---
 # Testing
@@ -540,16 +512,6 @@ These components can be integrated without changing the existing architecture.
 - Regex
 - JSON
 - CSV
-
----
-
-# Author
-
-**Harikaran C**
-
-B.Tech Information Technology
-
-SSN College of Engineering
 
 ---
 
