@@ -73,7 +73,7 @@ This allows the system to preserve both the extracted value and its origin.
 ---
 
 ## Architecture
-<img width="628" height="932" alt="image" src="https://github.com/user-attachments/assets/896b6ee0-e45b-434a-8cc4-59617b326e0f" />
+<img width="638" height="913" alt="image" src="https://github.com/user-attachments/assets/c253ece7-d5b2-430b-8029-a95e12e081e0" />
 
 ---
 
