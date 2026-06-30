@@ -9,6 +9,8 @@ from core.models import (
     Skill,
     Link,
 )
+from pydantic import BaseModel
+
 
 class ProjectionEngine:
 
@@ -19,7 +21,7 @@ class ProjectionEngine:
 
         with open(config_path) as file:
             self.config = json.load(file)
-
+        self.validate_config()
     def _resolve_path(
         self,
         candidate: Candidate,
@@ -28,133 +30,215 @@ class ProjectionEngine:
 
         return getattr(candidate, path, None)
     
-    def _format_field(
-        self,
-        value,
-    ):
-
-        include_confidence = self.config.get(
-            "include_confidence",
-            False,
-        )
+    def _serialize(self, value):
+        """
+        Recursively convert Pydantic models into JSON-serializable
+        dictionaries while respecting include_confidence.
+        """
 
         if value is None:
             return None
 
+        # ---------- FieldValue ----------
+
         if isinstance(value, FieldValue):
 
-            if include_confidence:
+            if self.config.get("include_confidence", False):
 
                 return {
-
-                    "value": value.value,
-
+                    "value": self._serialize(value.value),
                     "confidence": value.confidence,
-
                 }
+
+            return self._serialize(value.value)
+
+        # ---------- List ----------
+
+        if isinstance(value, list):
+
+            return [
+                self._serialize(item)
+                for item in value
+            ]
+
+        # ---------- Pydantic Model ----------
+
+        if isinstance(value, BaseModel):
+
+            result = {}
+
+            for key, val in value.model_dump(exclude_none=True).items():
+
+                result[key] = self._serialize(
+                    getattr(value, key)
+                )
+
+            return result
+
+        # ---------- Enum ----------
+
+        if hasattr(value, "value"):
 
             return value.value
 
         return value
-    
-    def _format_list(
+    def validate_config(self):
+
+        required = {
+            "include_confidence",
+            "missing_strategy",
+            "fields",
+        }
+
+        missing = required - self.config.keys()
+
+        if missing:
+            raise ValueError(
+                f"Missing config keys: {missing}"
+            )
+
+        allowed = {
+            "null",
+            "omit",
+            "error",
+        }
+
+        if (
+            self.config["missing_strategy"]
+            not in allowed
+        ):
+            raise ValueError(
+                "Invalid missing strategy."
+            )
+
+        for field in self.config["fields"]:
+
+            if "from" not in field:
+                raise ValueError(
+                    "'from' missing in projection field."
+                )
+
+            if "to" not in field:
+                raise ValueError(
+                    "'to' missing in projection field."
+                )
+    def _format_field(self, value):
+        return self._serialize(value)
+        
+    def _format_list(self, values):
+        return self._serialize(values)
+    def _normalize(
         self,
-        values,
+        field_name: str,
+        value,
     ):
-
-        formatted = []
-
-        for value in values:
-
-            if isinstance(value, FieldValue):
-
-                formatted.append(
-                    self._format_field(value)
-                )
-
-            elif isinstance(value, Skill):
-
-                formatted.append(
-
-                    {
-
-                        "name":
-
-                            self._format_field(
-                                value.name
-                            ),
-
-                        "category":
-
-                            value.category.value
-                            if value.category
-                            else None,
-
-                    }
-
-                )
-
-            elif isinstance(value, Link):
-
-                formatted.append(
-
-                    {
-
-                        "platform":
-
-                            value.platform.value,
-
-                        "url":
-
-                            self._format_field(
-                                value.url
-                            ),
-
-                    }
-
-                )
-
-            else:
-
-                formatted.append(value)
-
-        return formatted
-
-    def _normalize(self, value):
+        """
+        Normalize projected values according to the field.
+        """
 
         if value is None:
             return None
 
-        if isinstance(value, FieldValue):
+        # ---------------- Emails ----------------
 
-            if isinstance(value.value, str):
+        if field_name == "emails":
 
-                value.value = Normalizer.normalize_text(
-                    value.value
+            for email in value:
+
+                email.value = Normalizer.normalize_email(
+                    email.value
                 )
 
             return value
 
-        if isinstance(value, Skill):
+        # ---------------- Phones ----------------
 
-            value.name.value = Normalizer.normalize_skill(
-                value.name.value
+        if field_name == "phones":
+
+            for phone in value:
+
+                phone.value = Normalizer.normalize_phone(
+                    phone.value
+                )
+
+            return value
+
+        # ---------------- Skills ----------------
+
+        if field_name == "skills":
+
+            for skill in value:
+
+                skill.name.value = (
+                    Normalizer.normalize_skill(
+                        skill.name.value
+                    )
+                )
+
+            return value
+
+        # ---------------- Summary ----------------
+
+        if field_name == "summary":
+
+            value.value = Normalizer.normalize_text(
+                value.value
             )
 
             return value
 
-        if isinstance(value, Link):
+        # ---------------- Headline ----------------
 
-            if value.platform.value == "github":
-                value.url.value = value.url.value.lower()
+        if field_name == "headline":
 
-            elif value.platform.value == "linkedin":
-                value.url.value = value.url.value.lower()
+            value.value = Normalizer.normalize_text(
+                value.value
+            )
+
+            return value
+
+        # ---------------- Full Name ----------------
+
+        if field_name == "full_name":
+
+            value.value = Normalizer.normalize_text(
+                value.value
+            )
+
+            return value
+
+        # ---------------- Location ----------------
+
+        if field_name == "location":
+
+            if value.value.city:
+
+                value.value.city = (
+                    Normalizer.normalize_location(
+                        value.value.city
+                    )
+                )
+
+            if value.value.state:
+
+                value.value.state = (
+                    Normalizer.normalize_location(
+                        value.value.state
+                    )
+                )
+
+            if value.value.country:
+
+                value.value.country = (
+                    Normalizer.normalize_location(
+                        value.value.country
+                    )
+                )
 
             return value
 
         return value
-
+    
     def project(
         self,
         candidate: Candidate,
@@ -177,7 +261,9 @@ class ProjectionEngine:
                 candidate,
                 source,
             )
-
+            if field.get("normalize", True):
+                value = self._normalize(source, value)
+            
             if value is None:
 
                 if strategy == "omit":
@@ -201,7 +287,7 @@ class ProjectionEngine:
             else:
 
                 output[target] = self._format_field(
-                    self._normalize(value)
+                    value
                 )
 
         return output

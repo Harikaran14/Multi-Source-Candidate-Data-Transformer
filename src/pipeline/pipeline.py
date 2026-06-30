@@ -1,30 +1,51 @@
+from readers.csv_reader import CSVReader
+from readers.resume_reader import ResumeReader
 
-from enum import Enum
+from merger.merge_engine import MergeEngine
 
-class SourceType(str, Enum):
-    RESUME = "resume"
-    CSV = "csv"
-    GITHUB = "github"
-    LINKEDIN = "linkedin"
-    ATS = "ats"
-    MANUAL = "manual"
+from projection.projection_engine import ProjectionEngine
+
+from validation.validator import CandidateValidator
 
 
-class ExtractionMethod(str, Enum):
+class CandidatePipeline:
 
-    REGEX = "regex"
-    PDF_PARSER = "pdf_parser"
-    CSV_MAPPING = "csv_mapping"
-    API = "api"
-    MANUAL = "manual"
-    MERGED = "merged"
+    def __init__(self, projection_config):
 
+        self.merger = MergeEngine()
 
-class LinkType(str, Enum):
+        self.projection = ProjectionEngine(
+            projection_config
+        )
 
+    def run(
+        self,
+        csv_path,
+        resume_path,
+    ):
 
-    GITHUB = "github"
-    LINKEDIN = "linkedin"
-    PORTFOLIO = "portfolio"
-    WEBSITE = "website"
-    OTHER = "other"
+        csv_candidate = CSVReader(
+            csv_path
+        ).extract_candidate()
+
+        resume_candidate = ResumeReader(
+            resume_path
+        ).extract_candidate()
+
+        merged = self.merger.merge(
+            csv_candidate,
+            resume_candidate,
+        )
+
+        errors = CandidateValidator.validate(
+            merged
+        )
+
+        if errors:
+            raise ValueError(
+                "\n".join(errors)
+            )
+
+        return self.projection.project(
+            merged
+        )

@@ -94,7 +94,7 @@ class CSVReader(BaseReader):
         )
 
         candidate.full_name = self._create_field(
-            row.get("name")
+            row.get("name") or row.get("full_name")
         )
 
 
@@ -113,10 +113,8 @@ class CSVReader(BaseReader):
         if phone:
             candidate.phones.append(phone)
 
-      
-
         candidate.location = self._create_location(
-            row.get("current_location")
+            row.get("current_location") or row.get("location")
         )
 
         years = row.get("years_experience")

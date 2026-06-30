@@ -11,12 +11,17 @@ from .enums import (
 )
 
 class Provenance(BaseModel):
+
     model_config = ConfigDict(extra="forbid")
     source: SourceType
     extraction_method: ExtractionMethod
     original_value: Optional[str] = None
     reader_name: Optional[str] = None
-
+    confidence_at_source: float = Field(
+        default=1.0,
+        ge=0.0,
+        le=1.0
+    )
 
 class FieldValue(BaseModel):
 

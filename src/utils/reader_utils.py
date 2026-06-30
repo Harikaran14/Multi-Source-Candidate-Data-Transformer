@@ -27,10 +27,11 @@ def create_field_value(
         confidence = DEFAULT_CONFIDENCE.get(source, 0.80)
 
     provenance = Provenance(
-        source=source,
-        extraction_method=extraction_method,
-        original_value=str(value),
-        reader_name=reader_name,
+    source=source,
+    extraction_method=extraction_method,
+    original_value=str(value),
+    reader_name=reader_name,
+    confidence_at_source=confidence,
     )
 
     return FieldValue(
