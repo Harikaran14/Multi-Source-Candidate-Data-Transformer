@@ -310,6 +310,17 @@ pip install -r requirements.txt
 ---
 
 ## Run
+# Sample Data
+
+The repository includes sample inputs for demonstrating the pipeline.
+
+```text
+sample_data/
+├── candidate.csv
+└── resume.pdf
+```
+
+Example:
 
 ```bash
 python3 main.py \
@@ -348,7 +359,109 @@ output/
 ```
 
 ---
+# Testing
 
+The project includes unit tests to verify the correctness of the major pipeline components.
+
+### Test Coverage
+
+The following modules are tested:
+
+- ✅ CSV Reader
+- ✅ Resume Reader
+- ✅ Merge Engine
+- ✅ Projection Engine
+
+Project structure:
+
+```text
+tests/
+├── test_csv_reader.py
+├── test_resume_reader.py
+├── test_merge_engine.py
+└── test_projection_engine.py
+```
+
+---
+
+## Running Tests
+
+Run all tests using:
+
+```bash
+pytest tests/
+```
+
+Run a specific test module:
+
+```bash
+pytest tests/test_merge_engine.py
+```
+
+Run with verbose output:
+
+```bash
+pytest -v
+```
+
+---
+
+## What is Tested
+
+### CSV Reader
+
+- CSV parsing
+- Candidate object creation
+- Email extraction
+- Phone extraction
+- Structured field mapping
+
+---
+
+### Resume Reader
+
+- PDF text extraction
+- Name extraction
+- Email extraction
+- Phone extraction
+- Skill extraction
+- Experience extraction
+- Education extraction
+
+---
+
+### Merge Engine
+
+- Duplicate removal
+- Conflict resolution
+- Provenance preservation
+- Confidence computation
+- Overall confidence calculation
+
+---
+
+### Projection Engine
+
+- Runtime JSON configuration loading
+- Field selection
+- Field renaming
+- Confidence inclusion
+- Missing value handling
+
+---
+
+## Expected Result
+
+```text
+============================= test session starts =============================
+
+tests/test_csv_reader.py           PASSED
+tests/test_resume_reader.py        PASSED
+tests/test_merge_engine.py         PASSED
+tests/test_projection_engine.py    PASSED
+
+============================== 4 passed ==============================
+```
 # Design Decisions
 
 ### Canonical Intermediate Representation
