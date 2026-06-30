@@ -1,0 +1,121 @@
+Python|python
+Java|java
+C|c
+C++|c++,cpp
+C#|c#
+JavaScript|javascript,js
+TypeScript|typescript,ts
+Go|go,golang
+Rust|rust
+Swift|swift
+Kotlin|kotlin
+PHP|php
+Ruby|ruby
+Scala|scala
+R|r language,r
+MATLAB|matlab
+
+HTML|html
+CSS|css
+Bootstrap|bootstrap
+Tailwind CSS|tailwind,tailwindcss
+React|react,reactjs,react.js
+Angular|angular,angularjs
+Vue.js|vue,vuejs,vue.js
+Next.js|next,nextjs,next.js
+Redux|redux
+Node.js|node,nodejs,node.js
+Express.js|express,expressjs,express.js
+Flask|flask
+Django|django
+FastAPI|fastapi
+Spring Boot|spring boot,springboot
+ASP.NET|asp.net,aspnet
+Laravel|laravel
+
+MySQL|mysql
+PostgreSQL|postgres,postgresql
+SQLite|sqlite
+MongoDB|mongo,mongodb
+Redis|redis
+Oracle|oracle
+SQL Server|sql server,mssql
+
+Git|git
+GitHub|github
+GitLab|gitlab
+Docker|docker
+Kubernetes|kubernetes,k8s
+Jenkins|jenkins
+Terraform|terraform
+Ansible|ansible
+Linux|linux
+Nginx|nginx
+Apache|apache
+
+AWS|aws
+Azure|azure
+Google Cloud|gcp,google cloud
+
+TensorFlow|tensorflow,tf
+PyTorch|torch,pytorch
+Keras|keras
+Scikit-learn|sklearn,scikit-learn
+OpenCV|opencv
+Pandas|pandas
+NumPy|numpy
+Matplotlib|matplotlib
+Seaborn|seaborn
+XGBoost|xgboost
+LightGBM|lightgbm
+CatBoost|catboost
+
+Machine Learning|machine learning,ml
+Deep Learning|deep learning,dl
+Computer Vision|computer vision
+Natural Language Processing|nlp,natural language processing
+Generative AI|generative ai
+LLM|llm,llms
+RAG|rag,retrieval augmented generation
+Prompt Engineering|prompt engineering
+Agentic AI|agentic ai
+MCP|model context protocol,mcp
+
+LangChain|langchain
+LlamaIndex|llamaindex
+Ollama|ollama
+FAISS|faiss
+ChromaDB|chromadb
+Pinecone|pinecone
+Milvus|milvus
+Weaviate|weaviate
+
+Spark|spark
+PySpark|pyspark
+Kafka|kafka
+Airflow|airflow
+Hadoop|hadoop
+Hive|hive
+
+REST API|rest,rest api
+GraphQL|graphql
+gRPC|grpc
+
+Firebase|firebase
+Supabase|supabase
+
+Selenium|selenium
+PyTest|pytest
+JUnit|junit
+Jest|jest
+
+OAuth|oauth
+JWT|jwt
+
+Figma|figma
+Postman|postman
+
+React Native|react native
+Flutter|flutter
+Android|android
+iOS|ios

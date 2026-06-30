@@ -1,28 +1,18 @@
-"""
-csv_reader.py
 
-Reads a recruiter CSV export and converts it into the
-canonical Candidate model.
-"""
 
 from __future__ import annotations
-
 import csv
-
 from core.enums import (
     ExtractionMethod,
     SourceType,
 )
-
 from core.models import (
     Candidate,
     Experience,
     FieldValue,
     Location,
 )
-
 from readers.base_reader import BaseReader
-
 from utils.reader_utils import (
     create_field_value,
     is_missing,
@@ -30,35 +20,12 @@ from utils.reader_utils import (
 
 
 class CSVReader(BaseReader):
-    """
-    Reader for recruiter CSV exports.
-
-    Expected CSV Columns
-    --------------------
-    source_candidate_id
-    name
-    email
-    phone
-    current_company
-    title
-    current_location
-    years_experience
-    """
-
+    
     @property
     def source_type(self) -> SourceType:
         return SourceType.CSV
 
     def _load_csv(self) -> dict[str, str]:
-        """
-        Reads the recruiter CSV file.
-
-        Returns
-        -------
-        dict
-            Dictionary representing a single candidate.
-        """
-
         self._validate_source()
 
         with self.input_path.open(
@@ -85,10 +52,6 @@ class CSVReader(BaseReader):
         self,
         value: str | None,
     ) -> FieldValue | None:
-        """
-        Converts a raw CSV value into a FieldValue.
-        """
-
         if is_missing(value):
             return None
 
@@ -103,11 +66,7 @@ class CSVReader(BaseReader):
         self,
         city: str | None,
     ) -> FieldValue | None:
-        """
-        Creates a Location object wrapped
-        inside a FieldValue.
-        """
-
+        
         if is_missing(city):
             return None
 
@@ -123,27 +82,21 @@ class CSVReader(BaseReader):
         )
 
     def extract_candidate(self) -> Candidate:
-        """
-        Extracts candidate information from the recruiter CSV.
-        """
+        
 
         row = self._load_csv()
 
         candidate = Candidate()
 
-        # ---------- Source Candidate ID ----------
 
         candidate.source_candidate_id = self._create_field(
             row.get("source_candidate_id")
         )
 
-        # ---------- Name ----------
-
         candidate.full_name = self._create_field(
             row.get("name")
         )
 
-        # ---------- Email ----------
 
         email = self._create_field(
             row.get("email")
@@ -152,7 +105,6 @@ class CSVReader(BaseReader):
         if email:
             candidate.emails.append(email)
 
-        # ---------- Phone ----------
 
         phone = self._create_field(
             row.get("phone")
@@ -161,13 +113,11 @@ class CSVReader(BaseReader):
         if phone:
             candidate.phones.append(phone)
 
-        # ---------- Location ----------
+      
 
         candidate.location = self._create_location(
             row.get("current_location")
         )
-
-        # ---------- Years of Experience ----------
 
         years = row.get("years_experience")
 
@@ -177,7 +127,6 @@ class CSVReader(BaseReader):
             except ValueError:
                 pass
 
-        # ---------- Current Experience ----------
 
         company = self._create_field(
             row.get("current_company")
