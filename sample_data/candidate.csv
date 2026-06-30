@@ -1,2 +1,2 @@
-full_name,email,phone,location,headline,experience_years
-Harikaran C,hari@gmail.com,+919876543210,Chennai,Software Engineer,2
+candidate_id,full_name,email,phone,current_company,current_title,location,years_experience
+CAND-001,Harikaran C,hari@gmail.com,+919876543210,Adamsbridge Services Private Limited,Software Developer Intern,Chennai,0.2
