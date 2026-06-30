@@ -1,0 +1,52 @@
+{
+    "include_confidence": false,
+    "missing_strategy": "omit",
+
+    "fields": [
+        {
+            "from": "candidate_id",
+            "to": "candidate_id",
+            "normalize": false
+        },
+        {
+            "from": "full_name",
+            "to": "full_name",
+            "normalize": true
+        },
+        {
+            "from": "emails",
+            "to": "email_addresses",
+            "normalize": true
+        },
+        {
+            "from": "phones",
+            "to": "phone_numbers",
+            "normalize": true
+        },
+        {
+            "from": "skills",
+            "to": "technical_skills",
+            "normalize": true
+        },
+        {
+            "from": "experience",
+            "to": "work_history",
+            "normalize": false
+        },
+        {
+            "from": "education",
+            "to": "education_history",
+            "normalize": false
+        },
+        {
+            "from": "links",
+            "to": "social_links",
+            "normalize": true
+        },
+        {
+            "from": "location",
+            "to": "current_location",
+            "normalize": true
+        }
+    ]
+}
