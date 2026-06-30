@@ -1,0 +1,519 @@
+# Multi-Source Candidate Data Transformer
+
+> A modular candidate ingestion pipeline that transforms heterogeneous candidate data into a unified canonical profile with provenance tracking, confidence-based conflict resolution, validation, and configurable output projections.
+
+---
+
+## Overview
+
+Recruiters and hiring platforms often receive candidate information from multiple sources such as resumes, recruiter spreadsheets, ATS exports, LinkedIn profiles, and GitHub profiles. These sources may contain duplicate, incomplete, or conflicting information.
+
+This project implements a modular pipeline that:
+
+- Ingests candidate information from multiple sources.
+- Converts every source into a common canonical representation.
+- Merges candidate profiles intelligently.
+- Tracks provenance for every extracted field.
+- Computes confidence scores.
+- Validates and normalizes candidate data.
+- Produces configurable JSON outputs for different consumers.
+
+---
+
+## Features
+
+### Multi-Source Ingestion
+
+Currently implemented
+
+- Recruiter CSV Reader
+- Resume PDF Reader
+
+Extensible architecture for
+
+- LinkedIn Reader
+- GitHub Reader
+- ATS Reader
+- Manual Input Reader
+
+---
+
+### Canonical Candidate Model
+
+All readers produce the same internal `Candidate` object.
+
+```text
+Candidate
+├── candidate_id
+├── full_name
+├── emails
+├── phones
+├── location
+├── headline
+├── summary
+├── skills
+├── experience
+├── education
+├── links
+├── years_experience
+└── overall_confidence
+```
+
+Every extracted field is represented using
+
+```text
+FieldValue
+├── value
+├── confidence
+└── provenance
+```
+
+This allows the system to preserve both the extracted value and its origin.
+
+---
+
+## Architecture
+<img width="628" height="932" alt="image" src="https://github.com/user-attachments/assets/896b6ee0-e45b-434a-8cc4-59617b326e0f" />
+
+---
+
+## Project Structure
+
+```text
+src/
+│
+├── core/
+│   ├── models.py
+│   └── enums.py
+│
+├── readers/
+│   ├── base_reader.py
+│   ├── csv_reader.py
+│   └── resume_reader.py
+│
+├── merger/
+│   └── merge_engine.py
+│
+├── projection/
+│   └── projection_engine.py
+│
+├── validation/
+│   └── validator.py
+│
+├── utils/
+│   ├── normalizer.py
+│   ├── reader_utils.py
+│   └── skill_loader.py
+│
+├── pipeline/
+│   └── pipeline.py
+│
+└── main.py
+```
+
+---
+
+# Pipeline
+
+## 1. Reader Layer
+
+Each reader is responsible only for extracting data from a specific source.
+
+Implemented readers
+
+- CSVReader
+- ResumeReader
+
+Readers convert heterogeneous inputs into a common `Candidate` model.
+
+---
+
+## 2. Merge Engine
+
+The merge engine combines multiple candidate profiles into a single canonical profile.
+
+Responsibilities
+
+- Conflict resolution
+- Duplicate removal
+- Provenance merging
+- Confidence computation
+
+### Scalar Fields
+
+Example
+
+```
+CSV
+
+Harikaran C
+
+Resume
+
+Harikaran Chandrasekaran
+```
+
+Higher confidence wins.
+
+If confidence scores are similar, the more informative value is selected.
+
+---
+
+### Collection Fields
+
+Collections are normalized and deduplicated.
+
+- Emails
+- Phones
+- Skills
+- Links
+
+---
+
+## Confidence Strategy
+
+Initial confidence
+
+| Source | Confidence |
+|----------|------------|
+| Recruiter CSV | 0.95 |
+| Resume Regex | 0.85 |
+
+When multiple sources agree
+
+```
+confidence = max(conf1, conf2) + 0.05
+```
+
+When conflicting values are found
+
+```
+confidence = max(conf1, conf2) - 0.05
+```
+
+Overall confidence
+
+```
+Average confidence of all populated fields
+```
+
+---
+
+## Provenance Tracking
+
+Every extracted field stores its origin.
+
+Example
+
+```json
+{
+  "source": "resume",
+  "reader": "ResumeReader",
+  "extraction_method": "regex",
+  "original_value": "Harikaran C"
+}
+```
+
+This enables complete traceability throughout the pipeline.
+
+---
+
+## Validation & Normalization
+
+Before projection, candidate data is normalized and validated.
+
+### Normalization
+
+- Lowercase emails
+- E.164 phone format
+- Remove whitespace
+
+### Validation
+
+- Required fields
+- Email format
+- Phone format
+- Confidence range
+
+---
+
+## Projection Engine
+
+The projection engine is fully configuration driven.
+
+Supported capabilities
+
+- Field selection
+- Field renaming
+- Confidence inclusion
+- Missing value handling
+
+Example
+
+```json
+{
+  "path": "candidate_name",
+  "from": "full_name",
+  "include_confidence": true
+}
+```
+
+The same canonical candidate can generate multiple output formats without changing application code.
+
+Examples
+
+- Recruiter JSON
+- ATS JSON
+- Minimal API Response
+
+---
+
+# Running the Project
+
+## Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## Run
+# Sample Data
+
+The repository includes sample inputs for demonstrating the pipeline.
+
+```text
+sample_data/
+├── candidate.csv
+└── resume.pdf
+```
+
+Example:
+
+```bash
+python3 main.py \
+    --csv sample_data/candidate.csv \
+    --resume sample_data/resume.pdf \
+    --projection config/recruiter_projection.json \
+    --output output/recruiter.json
+```
+<img width="718" height="121" alt="image" src="https://github.com/user-attachments/assets/47a22fa8-dd5d-4c65-86e4-aaea5f24ad98" />
+
+---
+
+## Output
+
+Generated JSON
+
+```text
+output/
+    recruiter.json
+```
+
+---
+
+# Example Output
+
+```json
+{
+  "candidate_name": {
+    "value": "Harikaran C",
+    "confidence": 1.0
+  },
+  "emails": [...],
+  "skills": [...],
+  "education": [...],
+  "overall_confidence": 0.867
+}
+```
+<img width="912" height="511" alt="image" src="https://github.com/user-attachments/assets/499e8fba-0700-448a-8ab3-607be743e148" />
+
+
+---
+# Testing
+
+The project includes unit tests to verify the correctness of the major pipeline components.
+
+### Test Coverage
+
+The following modules are tested:
+
+- ✅ CSV Reader
+- ✅ Resume Reader
+- ✅ Merge Engine
+- ✅ Projection Engine
+
+Project structure:
+
+```text
+tests/
+├── test_csv_reader.py
+├── test_resume_reader.py
+├── test_merge_engine.py
+└── test_projection_engine.py
+```
+
+---
+
+## Running Tests
+
+Run all tests using:
+
+```bash
+pytest tests/
+```
+
+Run a specific test module:
+
+```bash
+pytest tests/test_merge_engine.py
+```
+
+Run with verbose output:
+
+```bash
+pytest -v
+```
+
+---
+
+## What is Tested
+
+### CSV Reader
+
+- CSV parsing
+- Candidate object creation
+- Email extraction
+- Phone extraction
+- Structured field mapping
+
+---
+
+### Resume Reader
+
+- PDF text extraction
+- Name extraction
+- Email extraction
+- Phone extraction
+- Skill extraction
+- Experience extraction
+- Education extraction
+
+---
+
+### Merge Engine
+
+- Duplicate removal
+- Conflict resolution
+- Provenance preservation
+- Confidence computation
+- Overall confidence calculation
+
+---
+
+### Projection Engine
+
+- Runtime JSON configuration loading
+- Field selection
+- Field renaming
+- Confidence inclusion
+- Missing value handling
+
+---
+
+## Expected Result
+
+```text
+============================= test session starts =============================
+
+tests/test_csv_reader.py           PASSED
+tests/test_resume_reader.py        PASSED
+tests/test_merge_engine.py         PASSED
+tests/test_projection_engine.py    PASSED
+
+============================== 4 passed ==============================
+```
+# Design Decisions
+
+### Canonical Intermediate Representation
+
+Instead of directly transforming each source into the final output, every reader produces the same `Candidate` model.
+
+Benefits
+
+- Easy to extend
+- Decouples readers from output formats
+- Simplifies merge logic
+
+---
+
+### Modular Architecture
+
+Every component has a single responsibility.
+
+- Readers
+- Merge Engine
+- Validator
+- Projection Engine
+
+This makes the system easier to maintain and extend.
+
+---
+
+### Configuration-Driven Output
+
+Projection is runtime configurable.
+
+New output schemas can be created without modifying source code.
+
+---
+
+# Assumptions
+
+- Resume contains machine-readable text.
+- Candidate identity is determined using available identifying information.
+- Confidence values are heuristic scores rather than ML predictions.
+- One recruiter CSV row corresponds to one candidate.
+
+---
+
+# Limitations
+
+Current implementation does not include
+
+- OCR for scanned resumes
+- LinkedIn Reader
+- GitHub Reader
+- Embedded PDF hyperlink extraction
+- Semantic parsing using LLMs
+
+These components can be integrated without changing the existing architecture.
+
+---
+
+# Future Improvements
+
+- OCR support
+- LinkedIn integration
+- GitHub integration
+- ATS reader
+- ML-based confidence estimation
+- Better experience and education parsing
+- Embedding-based candidate matching
+
+---
+
+# Technologies Used
+
+- Python 3
+- Pydantic
+- pdfplumber
+- Regex
+- JSON
+- CSV
+
+---
+
+
+This project was built as part of the Eightfold Engineering Internship Assignment to demonstrate modular software design, data modeling, configurable transformations, provenance tracking, and confidence-based candidate profile merging.
